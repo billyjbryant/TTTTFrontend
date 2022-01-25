@@ -334,12 +334,27 @@ const onboardingSteps = [
                     if(cropType == null) {
                       return;
                     }
-                    ipcRenderer.send(
-                      'camvas_open',
-                      JSON.stringify({
-                        cropType: cropType,
-                      })
-                    );
+                    if (cropType == 'mask') {
+                        selectMaskType().then((maskType) => {
+                          if(maskType == null) {
+                            return;
+                          }
+                          ipcRenderer.send(
+                            'camvas_open',
+                            JSON.stringify({
+                              maskType: maskType,
+                              cropType: cropType,
+                            })
+                          );
+                        })
+                    } else {
+                        ipcRenderer.send(
+                            'camvas_open',
+                            JSON.stringify({
+                                cropType: cropType,
+                            })
+                        );
+                    }
                     await listenForCropFinish();
                 });
             }
@@ -400,13 +415,14 @@ const listenForCropFinish = () => {
         let camCropDetails = JSON.parse(data);
         console.log('got data: ' + data);
         console.log('Updating settings with new cam crop...');
-        if(camCropDetails.cropType == 'cam-top' ) {
+        if(['cam-top','mask'].indexOf(camCropDetails.cropType)) {
           console.log('opening screenvas');
           ipcRenderer.send('screenvas_open', camCropDetails);
         }
         else {
           console.log('no cam crop selected, trying to close screenvas');
           ipcRenderer.send('screenvas_closed', JSON.stringify({
+            maskType: camCropDetails.maskType,
             camCrop: camCropDetails.camData,
             cropType: camCropDetails.cropType,
             callback: camCropDetails.callback
@@ -421,10 +437,11 @@ const listenForCropFinish = () => {
             let cropDetails = JSON.parse(data);
             let crop = cropDetails.camCrop;
             let screenCrop = cropDetails.screenCrop;
+            let mask = cropDetails.maskType;
             let result = await fetch(
-            'http://localhost:42074/update?camCrop=' +
-                encodeURIComponent(JSON.stringify(crop)) +
-                (screenCrop ? '&screenCrop=' + encodeURIComponent(JSON.stringify(screenCrop)) : '') +
+              `http://localhost:42074/update?camCrop=${encodeURIComponent(JSON.stringify(crop))}` +
+                (screenCrop ? `&screenCrop=${encodeURIComponent(JSON.stringify(screenCrop))}` : '') +
+                (mask ? `&maskType=${encodeURIComponent(mask)}`: '') +
                 `&cropType=${cropDetails.cropType}`
             );
             console.log('Adding camCrop successful?: ' + result);

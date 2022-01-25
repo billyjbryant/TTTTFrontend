@@ -63,6 +63,7 @@ ipcRenderer.on('crop_data', async (event, arg) => {
   let clip = cropDetailsAndClip.clip;
   let callback = cropDetailsAndClip.callback;
   let cropType = cropDetailsAndClip.cropType;
+  let maskType = cropDetailsAndClip.maskType;
   console.log(
     'clip crop details' +
       JSON.stringify(cropDetails) +
@@ -135,7 +136,8 @@ ipcRenderer.on('crop_data', async (event, arg) => {
         callback,
         canvas,
         clip,
-        cropType
+        cropType,
+        maskType
       );
       console.log('did stuff');
     }
@@ -154,7 +156,8 @@ ipcRenderer.on('crop_data', async (event, arg) => {
         canvas,
         image,
         clip,
-        cropType
+        cropType,
+        maskType
       );
     }
   });
@@ -170,7 +173,8 @@ ipcRenderer.on('crop_data', async (event, arg) => {
         canvas,
         image,
         clip,
-        cropType
+        cropType,
+        maskType
       );
     }
     console.log('loaded metadata ' + video.readyState);
@@ -188,7 +192,8 @@ ipcRenderer.on('crop_data', async (event, arg) => {
       canvas,
       image,
       clip,
-      cropType
+      cropType,
+      maskType
     );
     console.log('did stuff');
   }
@@ -203,7 +208,8 @@ let doAllCropperStuff = (
   canvas,
   image,
   clip,
-  cropType
+  cropType,
+  maskType
 ) => {
   console.log('video height' + video.videoHeight);
   console.log('video width' + video.videoWidth);
@@ -243,7 +249,7 @@ let doAllCropperStuff = (
   let currRatio = roundTo4Digits(16/9);
   cropper.setAspectRatio(16 / 9);
 
-  if (!camCrop?.width) {
+  if (!camCrop?.width || cropType === 'mask') {
     console.log('setting aspect ratio');
     cropper.setAspectRatio(16 / 9);
   } else {
@@ -268,6 +274,7 @@ let doAllCropperStuff = (
         cropDetails: {
           camCrop: scaleUpCrop(camCrop, video),
           screenCrop: scaleUpCrop(screenCrop, video),
+          maskType: maskType,
           cropType: cropType,
           isNormalized: true,
         },
@@ -275,6 +282,7 @@ let doAllCropperStuff = (
         callback: callback,
         isNormalized: true,
         clip: clip,
+        maskType: maskType,
         cropType: cropType,
       })
     );
@@ -383,6 +391,7 @@ let doAllCropperStuff = (
           screenCrop: scaleUpCrop(currCropDetails, video),
           isNormalized: true,
           callback: callback,
+          maskType: maskType,
           cropType: cropType,
         })
       );

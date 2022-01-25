@@ -499,17 +499,36 @@ document.addEventListener('DOMContentLoaded', async function (event) {
             selectCropType().then((cropType) => {
               if(cropType == null) {
                 return;
-              }
-              ipcRenderer.send(
+              } 
+              if (cropType == 'mask') {
+                selectMaskType().then((maskType) => {
+                  if(maskType == null) {
+                    return;
+                  }
+                  ipcRenderer.send(
+                    'camvas_open',
+                    JSON.stringify({
+                      cropDetails: {
+                        camCrop: settings.camCrop,
+                        screenCrop: settings.screenCrop,
+                      },
+                      maskType: maskType,
+                      cropType: cropType,
+                    })
+                  );
+                })
+              } else {
+                ipcRenderer.send(
                 'camvas_open',
                 JSON.stringify({
                   cropDetails: {
                     camCrop: settings.camCrop,
                     screenCrop: settings.screenCrop,
                   },
+                  maskType: null,
                   cropType: cropType,
                 })
-              );
+              );}
             });
           } else {
             handleRandomError("Couldn't find an example clip, please set a channel and try again", 'username');
@@ -721,7 +740,7 @@ document.addEventListener('DOMContentLoaded', async function (event) {
     // n: Update this as well
     // let result = await fetch("http://localhost:42074/update?camCrop=" + encodeURIComponent(JSON.stringify(camCropDetails)));
     // alert if the update succeeded or failed
-    if(camCropDetails.cropType == 'cam-top' ) {
+    if(['cam-top','mask'].indexOf(camCropDetails.cropType)) {
       console.log('opening screenvas');
       ipcRenderer.send('screenvas_open', camCropDetails);
     }
@@ -730,6 +749,7 @@ document.addEventListener('DOMContentLoaded', async function (event) {
       ipcRenderer.send('screenvas_closed', JSON.stringify({
         camCrop: camCropDetails.camData,
         cropType: camCropDetails.cropType,
+        maskType: camCropDetails.maskType,
         callback: camCropDetails.callback
       }));
     }
@@ -739,17 +759,19 @@ document.addEventListener('DOMContentLoaded', async function (event) {
   // GET /update endpoint with a URL constructed from the fields given in the query
   ipcRenderer.on('screenvas_closed', async (event, data) => {
     console.log('screenvas closed');
-    console.log('data: ' + data);
+    console.log(`data: ${data}`);
     let cropDetails = JSON.parse(data);
-    console.log('cropDetails: ' + JSON.stringify(cropDetails));
+    console.log(`cropDetails: ${JSON.stringify(cropDetails)}`);
     let crop = cropDetails.camCrop;
     let screenCrop = cropDetails.screenCrop;
-    console.log('crop: ' + JSON.stringify(crop));
-    console.log('screenCrop: ' + JSON.stringify(screenCrop));
+    let mask = cropDetails.maskType;
+    console.log(`crop: ${JSON.stringify(crop)}`);
+    console.log(`screenCrop: ${JSON.stringify(screenCrop)}`);
+    console.log(`mask: ${mask}`);
     let result = await fetch(
-      'http://localhost:42074/update?camCrop=' +
-        encodeURIComponent(JSON.stringify(crop)) +
-        (screenCrop ? '&screenCrop=' + encodeURIComponent(JSON.stringify(screenCrop)) : '') +
+      `http://localhost:42074/update?camCrop=${encodeURIComponent(JSON.stringify(crop))}` +
+        (screenCrop ? `&screenCrop=${encodeURIComponent(JSON.stringify(screenCrop))}` : '') +
+        (mask ? `&maskType=${encodeURIComponent(mask)}`: '') +
         `&cropType=${cropDetails.cropType}`
     );
     console.log('Adding camCrop successful?: ' + result);

@@ -1,43 +1,31 @@
 const selectCropType = async () => {
     let selection = 'cam-top';
-    changeSelection = (val) => {
-        selection = val;
+    changeSelection = () => {
+        const cropSelector = document.getElementById("cropType");
+        const preview = document.getElementById("cropPreview");
+        selection = cropSelector.options[cropSelector.selectedIndex].value;
+        preview.src=`images/crops/${selection}.png`;
     }
     let popup = SafeSwal.fire({
         title: 'Select crop type',
         html: /*html*/`
         <div style='margin-top: 10px' width="100%" id="cropTypeDiv">
-            <input 
-                type="radio" name="cropType" checked
-                id="cam-top" class="input-hidden" onclick="changeSelection('cam-top')" />
-            <label for="cam-top" class='radio-label'>
-                <p>Cam Top</p>
-                <img
-                src="images/camTop.png"
+            <div id="cropSelectorDiv">
+                <select name="cropType" id="cropType" class="crop-selector" onchange="changeSelection();">
+                    <option value="none" default disabled selected>Choose a FaceCam Crop</option>
+                    <option value="cam-top">Cam on Top</option>
+                    <option value="no-cam">No Cam</option>
+                    <option value="freeform">Freeform</option>
+                    <option value="mask">Masked Camera</option>
+                </select>
+            </div>
+            <div id="cropPreviewDiv">
+                <img 
+                    id="cropPreview" 
+                    class="crop-preview" 
+                    src="images/crops/cam-top.png" 
                 />
-            </label>
-            
-            <input 
-                type="radio" name="cropType"
-                id="no-cam" class="input-hidden" 
-                onclick="changeSelection('no-cam')"/>
-            <label for="no-cam" class='radio-label'>
-                <p>No Cam</p>
-                <img
-                src="images/noCam.png" 
-                />
-            </label>
-
-            <input 
-            type="radio" name="cropType"
-            id="freeform" class="input-hidden" 
-            onclick="changeSelection('freeform')"/>
-            <label for="freeform" class='radio-label'>
-                <p>Freeform</p>
-                <img
-                src="images/freeform.png" 
-                />
-            </label>
+            </div>
         </div>
         `,
         showCancelButton: true,

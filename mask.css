@@ -1,0 +1,26 @@
+/* Control the size of the Mask Preview*/
+div#maskPreviewDiv > .mask-preview {
+    width: 100%;
+}
+
+/* Mask & Crop Selector Dropdowns */
+.mask-selector {
+    height: 40px;
+    border-radius: 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+#maskPreviewDiv, #maskSelectorDiv {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#maskTypeDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
