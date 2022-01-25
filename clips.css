@@ -217,17 +217,26 @@ input[type=radio] + label {
 
 #cropTypeDiv {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   margin-bottom: 10px;
 }
 
-.cropImage {
-  width: 40px;
-  height: 16/9 * 40px;
+#cropSelectorDiv, #cropPreviewDiv {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
-/* input[type=radio]:checked + label>img {
-  transform: 
-    rotateZ(-10deg) 
-    rotateX(10deg);
-} */
+
+.crop-selector {
+  height: 40px;
+  border-radius: 10px;
+  font-size: large;
+  font-weight: bold;
+}
+
+/* Control the size of the Crop Preview*/
+div#cropPreviewDiv > .crop-preview {
+  width: 50%
+}
