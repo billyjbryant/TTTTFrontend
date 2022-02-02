@@ -249,7 +249,7 @@ let doAllCropperStuff = (
   let currRatio = roundTo4Digits(16/9);
   cropper.setAspectRatio(16 / 9);
 
-  if (!camCrop?.width) {
+  if (!camCrop?.width || cropType === 'mask') {
     console.log('setting aspect ratio');
     cropper.setAspectRatio(16 / 9);
   } else {

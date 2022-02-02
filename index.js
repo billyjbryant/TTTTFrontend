@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', async function (event) {
               if(cropType == null) {
                 return;
               } 
-              if (cropType === 'mask') {
+              if (['mask','mask-freeform'].indexOf(cropType)) {
                 selectMaskType().then((maskType) => {
                   if(maskType == null) {
                     return;
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', async function (event) {
     // n: Update this as well
     // let result = await fetch("http://localhost:42074/update?camCrop=" + encodeURIComponent(JSON.stringify(camCropDetails)));
     // alert if the update succeeded or failed
-    if(['cam-top','mask','cam-freeform'].indexOf(camCropDetails.cropType)) {
+    if(['cam-top','mask','cam-freeform','mask-freeform'].indexOf(camCropDetails.cropType)) {
       console.log('opening screenvas');
       ipcRenderer.send('screenvas_open', camCropDetails);
     }
