@@ -516,10 +516,7 @@ const doCustomCrop = async () => {
     screenCrop: settings.screenCrop,
   };
 
-  selectCropType().then((cropType) => {
-    if(cropType == null) {
-      return;
-    }
+  const _doCustomCrop = async (cropType, maskType) => {
     ipcRenderer.once('custom_crop', async (event, cropData) => {
       console.log('custom crop received');
       let crop = JSON.parse(cropData);
@@ -551,8 +548,26 @@ const doCustomCrop = async () => {
           clip: displayedClip,
           callback: 'custom_crop',
           cropType: cropType,
+          maskType: maskType,
         })
       );  
+  }
+
+  selectCropType().then((cropType) => {
+    if(cropType == null) {
+      return;
+    }
+    if(cropType === 'mask') {
+      selectMaskType().then((maskType) => {
+        if(maskType == null) {
+          return;
+        }
+        _doCustomCrop(cropType, maskType);
+      });
+    } else {
+      _doCustomCrop(cropType, null);
+    }
+    
   });
 }
 

@@ -249,7 +249,7 @@ let doAllCropperStuff = (
   let currRatio = roundTo4Digits(16/9);
   cropper.setAspectRatio(16 / 9);
 
-  if (!camCrop?.width || cropType === 'mask') {
+  if (!camCrop?.width) {
     console.log('setting aspect ratio');
     cropper.setAspectRatio(16 / 9);
   } else {
@@ -299,6 +299,13 @@ let doAllCropperStuff = (
     currRatio = roundTo4Digits(currAspectRatioNumber);
     cropper.setAspectRatio(currAspectRatioNumber);
     console.log('no-cam activated');
+  }
+  else if(isScreenvas && cropType == 'mask') {
+    ratioButton.style.display = 'none';
+    currAspectRatioNumber = 9 / 16;
+    currRatio = roundTo4Digits(currAspectRatioNumber);
+    cropper.setAspectRatio(currAspectRatioNumber);
+    console.log('mask activated');
   }
   else if(cropType == 'freeform') {
     ratioButton.style.display = 'none';

@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', async function (event) {
               if(cropType == null) {
                 return;
               } 
-              if (cropType == 'mask') {
+              if (cropType === 'mask') {
                 selectMaskType().then((maskType) => {
                   if(maskType == null) {
                     return;
